@@ -7,6 +7,7 @@ from time import sleep
 import re
 import numpy as np
 import math
+import sys
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -46,11 +47,15 @@ def read_gps_data():
         my_list = received_data.decode("utf-8").split('$')
         lat = np.mean(
             [math.modf(float(item.split(',')[1]) / 100)[1] + math.modf(float(item.split(',')[1]) / 100)[0] * (100 / 60)
-                         for item in my_list if item.startswith('GNGLL')])
+             for item in my_list if item.startswith('GNGLL')])
         lon = np.mean(
             [math.modf(float(item.split(',')[3]) / 100)[1] + math.modf(float(item.split(',')[3]) / 100)[0] * (100 / 60)
              for item in my_list if item.startswith('GNGLL')])
-        socketio.emit('gps_data', {'lat': lat}, {'lon': lon})
+        try:
+            socketio.emit('gps_data', {'lat': lat})
+        except:
+            print('Could not emit')
+        print(lat, lon)
 
 
 @app.route('/')
@@ -71,4 +76,4 @@ def connect():
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='192.168.4.1')
+    socketio.run(app, host=str(sys.argv[1]))
