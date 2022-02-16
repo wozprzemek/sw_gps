@@ -8,6 +8,10 @@ import re
 import numpy as np
 import math
 import sys
+import time
+import board
+from adafruit_lsm6ds.lsm6ds33 import LSM6DS33
+import os
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -20,14 +24,15 @@ thread = None
 thread2 = None
 thread_lock = Lock()
 
-
 def read_accelerometer_data():
+    i2c = board.I2C()
+    sensor = LSM6DS33(i2c)
     """Example of how to send server generated events to clients."""
     while True:
-        socketio.sleep(0.1)
-        num = random.randint(0, 10)
+        acc = [sensor.acceleration[0]/9.81, sensor.acceleration[1]/9.81, sensor.acceleration[2]/9.81]
         socketio.emit('acc_data',
-                      {'data': num})
+                      {'acc': acc})
+        socketio.sleep(0.1)
 
 
 def read_gps_data():
@@ -41,9 +46,8 @@ def read_gps_data():
     ser = serial.Serial("/dev/ttyS0", 9600)  # Open port with baud rate
     while True:
         received_data = ser.read()  # read serial port
-        data_left = ser.inWaiting()  # check for remaining byte
+                data_left = ser.inWaiting()  # check for remaining byte
         received_data += ser.read(data_left)
-        socketio.sleep(1)
         my_list = received_data.decode("utf-8").split('$')
         lat = np.mean(
             [math.modf(float(item.split(',')[1]) / 100)[1] + math.modf(float(item.split(',')[1]) / 100)[0] * (100 / 60)
@@ -51,11 +55,13 @@ def read_gps_data():
         lon = np.mean(
             [math.modf(float(item.split(',')[3]) / 100)[1] + math.modf(float(item.split(',')[3]) / 100)[0] * (100 / 60)
              for item in my_list if item.startswith('GNGLL')])
-        try:
-            socketio.emit('gps_data', {'lat': lat})
-        except:
-            print('Could not emit')
+        if (not np.isnan(lat)) and (not np.isnan(lon)):
+            try:
+                socketio.emit('gps_data', {'cords': [lat,lon]})
+            except:
+                print('Could not emit')
         print(lat, lon)
+        socketio.sleep(1)
 
 
 @app.route('/')
