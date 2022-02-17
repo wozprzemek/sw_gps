@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Flask-SocketIO Test</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function() {
+
+            // Connect to the Socket.IO server.
+            // The connection URL has the following format, relative to the current page:
+            //     http[s]://<domain>:<port>[/<namespace>]
+            var socket = io();
+            //var socket = SocketIO(app, cors_allowed_origins="*")
+
+            // Event handler for new connections.
+            // The callback function is invoked when a connection with the
+            // server is established.
+            socket.on('connect', function() {
+                socket.emit('my_event', {data: 'I\'m connected!'});
+            });
+
+            // Event handler for server sent data.
+            // The callback function is invoked whenever the server emits data
+            // to the client. The data is then displayed in the "Received"
+            // section of the page.
+            socket.on('acc_data', function(msg, cb) {
+                //console.log(msg.acc)
+                //console.log(typeof msg.acc == 'undefined')
+                //var acc_x = document.querySelector('div#acc_x');
+                //var acc_y = document.querySelector('div#acc_y');
+                //var acc_z = document.querySelector('div#acc_z');
+                if (typeof msg.acc !== 'undefined'){
+                        console.log(msg.acc);
+                        //acc_x.textContent = msg.acc[0];
+                        //acc_y.textContent = msg.acc[1];
+                        //acc_z.textContent = msg.acc[2];
+                        document.getElementById('gforce_indicator').style.marginTop= Math.round(msg.acc[0] * 300) + 'px';
+                        document.getElementById('gforce_indicator').style.marginLeft= Math.round(msg.acc[1] * 300) + 'px';
+                }
+                //acc_x.textContent = msg.acc[0];
+                //acc_y.textContent = msg.acc[1];
+                //acc_z.textContent = msg.acc[2];
+            });
+            socket.on('gps_data', function(msg, cb) {
+                if (typeof msg.cords !== 'undefined'){
+                        console.log(msg)
+                        var longitude = document.querySelector('div#longitude');
+                        var latitude = document.querySelector('div#latitude');
+                        redraw(msg.cords[1], msg.cords[0]);
+                        longitude.textContent = msg.cords[0];
+                        latitude.textContent = msg.cords[1];
+                }
+            });
+        });
+    </script>
+
+</head>
+<body>
+    <div id="content">
+        <div id="gforce_container">
+            <div class="gforce" id="gforce_background"></div>
+            <div class="gforce" id="horizontal_line"></div>
+            <div class="gforce" id="vertical_line"></div>
+            <div class="gforce" id="circle1"></div>
+            <div class="gforce" id="circle2"></div>
+            <div class="gforce" id="circle3"></div>
+            <div class="gforce" id="gforce_indicator"></div>
+
+            <div class="gforce_text" id="acc">0.0 g</div>
+        </div>
+        <div id="map_container">
+            <div id="longitude"> LON </div>
+            <div id="latitude"> LAT </div>
+            <div id="map-canvas"></div>
+        </div>
+    </div>
+    <script type="text/javascript">
+            window.lat = 52.40333;
+            window.lng = 16.95076;
+
+            var map;
+            var mark;
+            var lineCoords = [];
+
+            var initialize = function() {
+              map  = new google.maps.Map(document.getElementById('map-canvas'), {center:{lat:lat,lng:lng},zoom:18});
+              mark = new google.maps.Marker({position:{lat:lat, lng:lng}, map:map});
+            };
+
+            window.initialize = initialize;
+
+            var redraw = function(lng,lat) {
+
+                map.setCenter({lat:lat, lng:lng, alt:0});
+                mark.setPosition({lat:lat, lng:lng, alt:0});
+
+                lineCoords.push(new google.maps.LatLng(lat, lng));
+
+                var lineCoordinatesPath = new google.maps.Polyline({
+                    path: lineCoords,
+                    geodesic: true,
+                    strokeColor: '#2E10FF'
+                });
+
+                lineCoordinatesPath.setMap(map);
+            };
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyC7alINfKs4zudvNe2qXW6cfxd4PVLPUGo&callback=initialize"></script>
+</body>
+</html>
