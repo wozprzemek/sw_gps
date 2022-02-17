@@ -32,7 +32,7 @@ def read_accelerometer_data():
         acc = [sensor.acceleration[0]/9.81, sensor.acceleration[1]/9.81, sensor.acceleration[2]/9.81]
         socketio.emit('acc_data',
                       {'acc': acc})
-        socketio.sleep(0.1)
+        socketio.sleep(0.01)
 
 
 def read_gps_data():
@@ -46,7 +46,7 @@ def read_gps_data():
     ser = serial.Serial("/dev/ttyS0", 9600)  # Open port with baud rate
     while True:
         received_data = ser.read()  # read serial port
-                data_left = ser.inWaiting()  # check for remaining byte
+        data_left = ser.inWaiting()  # check for remaining byte
         received_data += ser.read(data_left)
         my_list = received_data.decode("utf-8").split('$')
         lat = np.mean(
