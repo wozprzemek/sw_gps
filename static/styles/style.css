@@ -1,0 +1,105 @@
+body{
+    padding: 0;
+    margin: 0;
+    background-color: #3D4751;
+    font-family: sans-serif;
+}
+
+#map-canvas{
+    width:720px;
+    height:400px;
+    border: 6px solid #056af7;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#lon{
+    color: white;
+}
+
+#lat{
+    color: white;
+}
+
+#content{
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+
+#gforce_container{
+    grid-area: 1/1/2/2;
+    display: grid;
+    grid-template-columns: 1fr 300px 1fr;
+    grid-template-rows: 1fr 300px 1fr;
+}
+
+#map_container{
+    grid-area: 1/2/2/3;
+}
+
+.gforce{
+    grid-area: 2/2/3/3;
+    align-self: center;
+    justify-self: center;
+}
+
+#gforce_background{
+    width: 300px;
+    height: 300px;
+    border-radius: 150px;
+    background-color: #292F36;
+    border: #7A82AB 1px solid;
+}
+
+#horizontal_line{
+    width: 300px;
+    height: 5px;
+    background-color: #7A82AB;
+}
+
+#vertical_line{
+    width: 5px;
+    height: 300px;
+    background-color: #7A82AB;
+}
+
+
+#circle1{
+    width: 75px;
+    height: 75px;
+    border-radius: 37.5px;
+    border: #7A82AB 1px solid;
+}
+
+#circle2{
+    width: 150px;
+    height: 150px;
+    border-radius: 75px;
+    border: #7A82AB 1px solid;
+}
+
+#circle3{
+    width: 225px;
+    height: 225px;
+    border-radius: 112.5px;
+    border: #7A82AB 1px solid;
+}
+
+#gforce_indicator{
+    width: 30px;
+    height: 30px;
+    background-color: #FF101F;
+    border-radius: 15px;
+}
+
+.gforce_text{
+    color: white;
+    font-size: 32px;
+    grid-area: 3/2/4/3;
+    align-self: start;
+    justify-self: center;
+    margin-top: 32px;
+}
