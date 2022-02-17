@@ -49,12 +49,33 @@ def read_gps_data():
         data_left = ser.inWaiting()  # check for remaining byte
         received_data += ser.read(data_left)
         my_list = received_data.decode("utf-8").split('$')
-        lat = np.mean(
-            [math.modf(float(item.split(',')[1]) / 100)[1] + math.modf(float(item.split(',')[1]) / 100)[0] * (100 / 60)
-             for item in my_list if item.startswith('GNGLL')])
-        lon = np.mean(
-            [math.modf(float(item.split(',')[3]) / 100)[1] + math.modf(float(item.split(',')[3]) / 100)[0] * (100 / 60)
-             for item in my_list if item.startswith('GNGLL')])
+        latTab = []
+        lonTab = []
+        for item in my_list:
+            if item.startswith('GNGLL'):
+                single = item.split(',')
+                try:
+                    l1 = float(single[1])
+                    l2 = float(single[3])
+                except:
+                    continue
+                l1 = math.modf(l1 / 100)[1] + math.modf(l1 / 100)[0] * (100 / 60)
+                l2 = math.modf(l2 / 100)[1] + math.modf(l2 / 100)[0] * (100 / 60)
+                if single[2] == '' or single[3] == '':
+                    continue
+                if single[2] == 'S':
+                    l1 *= -1
+                if single[4] == 'W':
+                    l2 *= -1
+                latTab.append(l1)
+                lonTab.append(l2)
+
+        if len(latTab) == 0 or len(lonTab) == 0:
+            continue
+        else:
+            lat = np.mean(latTab)
+            lon = np.mean(lonTab)
+
         if (not np.isnan(lat)) and (not np.isnan(lon)):
             try:
                 socketio.emit('gps_data', {'cords': [lat,lon]})
