@@ -32,7 +32,6 @@
                 //var acc_y = document.querySelector('div#acc_y');
                 //var acc_z = document.querySelector('div#acc_z');
                 if (typeof msg.acc !== 'undefined'){
-                        console.log(msg.acc);
                         //acc_x.textContent = msg.acc[0];
                         //acc_y.textContent = msg.acc[1];
                         //acc_z.textContent = msg.acc[2];
@@ -45,12 +44,7 @@
             });
             socket.on('gps_data', function(msg, cb) {
                 if (typeof msg.cords !== 'undefined'){
-                        console.log(msg)
-                        var longitude = document.querySelector('div#longitude');
-                        var latitude = document.querySelector('div#latitude');
                         redraw(msg.cords[1], msg.cords[0]);
-                        longitude.textContent = msg.cords[0];
-                        latitude.textContent = msg.cords[1];
                 }
             });
         });
@@ -71,8 +65,6 @@
             <div class="gforce_text" id="acc">0.0 g</div>
         </div>
         <div id="map_container">
-            <div id="longitude"> LON </div>
-            <div id="latitude"> LAT </div>
             <div id="map-canvas"></div>
         </div>
     </div>
