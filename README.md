@@ -28,3 +28,8 @@ Go to Interface Options -> I2C -> Select Yes -> OK
 ```
 sudo reboot
 ```
+## **Usage**
+
+```
+python app.py <raspberrypi IP address>
+```
