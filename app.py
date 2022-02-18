@@ -61,7 +61,7 @@ def read_gps_data():
                     continue
                 l1 = math.modf(l1 / 100)[1] + math.modf(l1 / 100)[0] * (100 / 60)
                 l2 = math.modf(l2 / 100)[1] + math.modf(l2 / 100)[0] * (100 / 60)
-                if single[2] == '' or single[3] == '':
+                if single[2] == '' or single[4] == '':
                     continue
                 if single[2] == 'S':
                     l1 *= -1
