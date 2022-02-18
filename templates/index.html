@@ -7,7 +7,31 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function() {
+            var canvas = document.getElementById('gforce_canvas');
+            var ctx = canvas.getContext('2d');
+            var x = 0;
+            var y = 0;
+            var new_x = 0;
+            var new_y = 0;
 
+            function lerp(start, end, t){
+                return start * (1 - t) + end * t;
+            }
+            function moveIndicator(){
+                //console.log("old", x, y);
+                //console.log("new", new_x, new_y);
+                new_x = lerp(new_x, x, 0.25);
+                new_y = lerp(new_y, y, 0.25);
+                ctx.clearRect(0,0, 300, 300);
+                ctx.fillStyle = "#E71D36";
+                ctx.beginPath();
+                ctx.arc(new_x + 150,new_y + 150,15,0,Math.PI*2,true); // gforce indicator
+                ctx.closePath();
+                ctx.fill();
+                requestAnimationFrame(moveIndicator);
+
+            }
+            moveIndicator();
             // Connect to the Socket.IO server.
             // The connection URL has the following format, relative to the current page:
             //     http[s]://<domain>:<port>[/<namespace>]
@@ -32,18 +56,14 @@
                 //var acc_y = document.querySelector('div#acc_y');
                 //var acc_z = document.querySelector('div#acc_z');
                 if (typeof msg.acc !== 'undefined'){
-                        //acc_x.textContent = msg.acc[0];
-                        //acc_y.textContent = msg.acc[1];
-                        //acc_z.textContent = msg.acc[2];
-                        document.getElementById('gforce_indicator').style.marginTop= Math.round(msg.acc[0] * 300) + 'px';
-                        document.getElementById('gforce_indicator').style.marginLeft= Math.round(msg.acc[1] * 300) + 'px';
+                        //console.log(x,y);
+                        x = msg.acc[0] * -75;
+                        y = msg.acc[1] * 75;
                 }
-                //acc_x.textContent = msg.acc[0];
-                //acc_y.textContent = msg.acc[1];
-                //acc_z.textContent = msg.acc[2];
             });
             socket.on('gps_data', function(msg, cb) {
                 if (typeof msg.cords !== 'undefined'){
+                        console.log(msg)
                         redraw(msg.cords[1], msg.cords[0]);
                 }
             });
@@ -60,8 +80,7 @@
             <div class="gforce" id="circle1"></div>
             <div class="gforce" id="circle2"></div>
             <div class="gforce" id="circle3"></div>
-            <div class="gforce" id="gforce_indicator"></div>
-
+            <canvas class="gforce" id="gforce_canvas" width="300" height="300"></canvas>
             <div class="gforce_text" id="acc">0.0 g</div>
         </div>
         <div id="map_container">
