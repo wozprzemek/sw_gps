@@ -32,7 +32,7 @@ def read_accelerometer_data():
         acc = [sensor.acceleration[0]/9.81, sensor.acceleration[1]/9.81, sensor.acceleration[2]/9.81]
         socketio.emit('acc_data',
                       {'acc': acc})
-        socketio.sleep(0.01)
+        socketio.sleep(0.05)
 
 
 def read_gps_data():
