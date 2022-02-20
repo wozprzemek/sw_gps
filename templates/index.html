@@ -13,6 +13,7 @@
             var y = 0;
             var new_x = 0;
             var new_y = 0;
+            var max = 0;
 
             function lerp(start, end, t){
                 return start * (1 - t) + end * t;
@@ -52,13 +53,19 @@
             socket.on('acc_data', function(msg, cb) {
                 //console.log(msg.acc)
                 //console.log(typeof msg.acc == 'undefined')
-                //var acc_x = document.querySelector('div#acc_x');
-                //var acc_y = document.querySelector('div#acc_y');
+                var acc_div = document.querySelector('div#acc');
+                var max_div = document.querySelector('div#max');
                 //var acc_z = document.querySelector('div#acc_z');
                 if (typeof msg.acc !== 'undefined'){
                         //console.log(x,y);
+                        acc = Math.sqrt(Math.pow(msg.acc[0],2) + Math.pow(msg.acc[1],2)).toFixed(2);
+                        if (acc > max){
+                                max = acc;
+                        }
                         x = msg.acc[0] * -75;
                         y = msg.acc[1] * 75;
+                        acc_div.textContent = acc + ' g';
+                        max_div.textContent = max + ' g';
                 }
             });
             socket.on('gps_data', function(msg, cb) {
@@ -82,6 +89,7 @@
             <div class="gforce" id="circle3"></div>
             <canvas class="gforce" id="gforce_canvas" width="300" height="300"></canvas>
             <div class="gforce_text" id="acc">0.0 g</div>
+            <div class="gforce_text" id="max">0.0 g</div>
         </div>
         <div id="map_container">
             <div id="map-canvas"></div>
