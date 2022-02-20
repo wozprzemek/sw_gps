@@ -105,3 +105,8 @@ body{
     justify-self: center;
     margin-top: 32px;
 }
+
+#max{
+    font-size: 24px;
+    margin-top: 72px;
+}
