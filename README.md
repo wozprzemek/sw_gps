@@ -33,3 +33,6 @@ sudo reboot
 ```
 python app.py <raspberrypi IP address>
 ```
+
+## **Access Point**
+https://www.raspberrypi.com/documentation/computers/configuration.html#setting-up-a-routed-wireless-access-point
